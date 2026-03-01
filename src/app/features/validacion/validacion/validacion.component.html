@@ -1,11 +1,11 @@
 <div class=" contain">
     <div *ngIf="!iniciarSesi" class="containerVAlidacion">
 
-        <h1>MusicBares</h1>
+        <h1>Music Bars</h1>
         <br>
         <br>
         <h2>Validacion de Cuenta: {{email}} </h2>
-        <div class="inputs">
+        <div class="inputs" *ngIf="comunicarConWA">
 
             <input type="password" maxlength="4" pattern="\d{4}" placeholder="____1" class="Validar" #primerBoque />
             <input type="password" maxlength="4" pattern="\d{4}" placeholder="____2" class="Validar" />
@@ -13,6 +13,16 @@
             <button (click)="validarInicio(+primerBoque.value, +segundoBloque.value)" class="Validar">Validar </button>
 
         </div>
+        <button (click)="comunicarWA()" class="btn-whatsapp" *ngIf="!comunicarConWA">
+            
+             <span>Pide tu codigo...</span>
+
+            <!-- O SVG inline -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#25D366" viewBox="0 0 24 24">
+                <path
+                    d="M20.52 3.48A11.934 11.934 0 0 0 12 0C5.372 0 0 5.372 0 12c0 2.12.555 4.1 1.524 5.817L0 24l6.455-1.522A11.933 11.933 0 0 0 12 24c6.628 0 12-5.372 12-12 0-3.182-1.24-6.163-3.48-8.52zm-8.52 18c-1.946 0-3.868-.517-5.528-1.49l-.395-.234-3.84.905.911-3.733-.257-.404A9.932 9.932 0 0 1 2 12c0-5.523 4.477-10 10-10 2.673 0 5.176 1.042 7.07 2.93C21.958 6.824 23 9.327 23 12c0 5.523-4.477 10-10 10zm5.313-7.523c-.28-.14-1.657-.817-1.914-.911-.257-.093-.443-.14-.63.14-.187.28-.72.911-.883 1.096-.162.187-.325.21-.604.07-.28-.14-1.18-.434-2.248-1.383-.83-.74-1.39-1.65-1.555-1.93-.162-.28-.017-.43.123-.57.126-.126.28-.325.42-.487.14-.162.187-.28.28-.467.093-.187.046-.35-.023-.487-.07-.14-.63-1.518-.863-2.08-.228-.547-.46-.472-.63-.48l-.537-.01c-.17 0-.446.063-.68.297-.235.234-.9.883-.9 2.15 0 1.27.92 2.5 1.05 2.675.14.187 1.813 2.772 4.393 3.888.614.265 1.092.422 1.465.54.616.197 1.177.17 1.62.103.494-.073 1.657-.678 1.893-1.334.233-.655.233-1.218.163-1.334-.07-.116-.257-.187-.537-.326z" />
+            </svg>
+        </button>
     </div>
 </div>
 <br>

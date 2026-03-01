@@ -4,6 +4,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService, } from '../../../core/servicios/auth.service';
+// validacion.component.ts (imports)
 
 @Component({
   selector: 'app-validacion',
@@ -17,6 +18,7 @@ export class ValidacionComponent implements OnInit {
   loginForm: FormGroup;
 
   email: string = "";
+  comunicarConWA=false;
 
   constructor(private router: Router,
     private fb: FormBuilder,
@@ -54,7 +56,8 @@ export class ValidacionComponent implements OnInit {
       // Limpiamos valores si quieres
       primerBloque = 0;
       segundoBloque = 0;
-      this.iniciarSesi=true
+      this.iniciarSesi = true
+      this.comunicarConWA=false;
       // 🔹 Redirigimos automáticamente al PanelComponent
       this.router.navigate(['/panel']);
     } else {
@@ -62,4 +65,23 @@ export class ValidacionComponent implements OnInit {
       // Opcional: mostrar mensaje de error
     }
   }
+
+  comunicarWA() {
+
+    const telefono = '573135249496'; // 🔹 Cambia por tu número real con código país
+    const emailUsuario = this.email || this.loginForm.get('email')?.value || 'No proporcionado';
+    this.comunicarConWA=true;
+    const mensaje = `
+      Hola, quiero validar mi acceso.
+      Email: ${emailUsuario}
+      Fecha: ${new Date().toLocaleString()}
+        `;
+
+    const mensajeCodificado = encodeURIComponent(mensaje.trim());
+
+    const url = `https://wa.me/${telefono}?text=${mensajeCodificado}`;
+
+    window.open(url, '_blank');
+  }
 }
+
