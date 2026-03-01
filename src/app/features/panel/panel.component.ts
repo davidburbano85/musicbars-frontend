@@ -23,6 +23,7 @@ export class PanelComponent implements OnInit {
   intervalColaId: any;      // Intervalo para refresco de cola
   intervalTokenId: any;     // Intervalo para refresco de token
   mostrarFormularioBar = false;
+  nombreMesa="";
   constructor(
     private videoService: VideoService,
     public mesaService: MesaService,
@@ -34,6 +35,8 @@ export class PanelComponent implements OnInit {
 
 
   ngOnInit(): void {
+
+
     // Si el usuario no tiene bar cargado → mostrar formulario
     if (!this.authService.barUsuario) {
       this.mostrarFormularioBar = true;
@@ -101,10 +104,26 @@ export class PanelComponent implements OnInit {
         this.cola = []; // limpiar cola actual
 
         videos.forEach((video, index) => {
-          //console.log(`[DEBUG PANEL] Video #${index} recibido:`, video);
+          console.log(`[DEBUG PANEL] Video #${index} recibido:`, video);
 
           const idYoutube = video.idVideoYoutube ?? video.idYoutube ?? video.youtubeId ?? null;
           const mesa = video.idMesa ?? video.numeroMesa ?? video.mesa ?? 'Sin mesa';
+          const idMesa = video.idMesa;
+          if (!idMesa) {
+          } else {
+            // Llamamos al servicio para obtener la mesa real
+            this.mesaService.obtenerMesa(idMesa).subscribe({
+              next: (mesa) => {
+                const mesanumero = mesa.numeroMesa; // aquí sí tienes el número real
+                this.nombreMesa=mesa.codigoQR
+
+                //  actualizar qrMesa en la cola para el html
+                video.qrMesa = this.nombreMesa;
+              },
+              error: (err) => console.error(`[DEBUG PANEL] Error obteniendo mesa para Video #${index}:`, err)
+            });
+          }
+
           const usuario = video.usuario ?? { correoElectronico: localStorage.getItem('usuarioEmail'), nombreCompleto: 'Desconocido' };
 
           if (!idYoutube) return;

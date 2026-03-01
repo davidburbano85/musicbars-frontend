@@ -121,7 +121,7 @@
         </div>
         <ul *ngIf="cola && cola.length > 0">
           <li *ngFor="let video of cola">
-            <strong>{{ video.tituloCancion }}</strong> - Mesa: {{ video.qrMesa || 'No disponible' }}
+            <Mesa:>{{ video.tituloCancion }}  <span> Mesa: {{nombreMesa}}</span>
             <button (click)="eliminarVideo(video.idVideo)">Eliminar</button>
           </li>
         </ul>
