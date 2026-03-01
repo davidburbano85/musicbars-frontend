@@ -15,11 +15,11 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/musicbares-frontend/browser",
+            "outputPath": "dist/musicbares-frontend",
             "index": "src/index.html",
-            "main": "src/main.ts",
+            "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -36,8 +36,7 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": [],
-            "baseHref": "/"
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -49,21 +48,16 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "4kB"
+                  "maximumWarning": "10kB",
+                  "maximumError": "20kB"
                 }
               ],
-              "outputHashing": "all",
-              "optimization": true,
-              "sourceMap": false,
-              "extractCss": true
+              "outputHashing": "all"
             },
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true,
-              "vendorChunk": true,
-              "buildOptimizer": false
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
@@ -72,10 +66,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "musicbares-frontend:build:production"
+              "buildTarget": "musicbares-frontend:build:production"
             },
             "development": {
-              "browserTarget": "musicbares-frontend:build:development"
+              "buildTarget": "musicbares-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -95,8 +89,7 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public",
-                "output": "/"
+                "input": "public"
               }
             ],
             "styles": [
