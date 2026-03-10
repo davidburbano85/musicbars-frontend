@@ -23,7 +23,7 @@ export class PanelComponent implements OnInit {
   intervalColaId: any;      // Intervalo para refresco de cola
   intervalTokenId: any;     // Intervalo para refresco de token
   mostrarFormularioBar = false;
-  nombreMesa="";
+  nombreMesa = "";
   constructor(
     private videoService: VideoService,
     public mesaService: MesaService,
@@ -87,78 +87,269 @@ export class PanelComponent implements OnInit {
   }
 
 
-  cargarColaConTitulos(idBar: number): void {
-    console.log('[DEBUG PANEL] cargarColaConTitulos ejecutada con idBar:', idBar);
-    if (!idBar || idBar <= 0) return;
+  // cargarColaConTitulos(idBar: number): void {
+  //   console.log('[DEBUG PANEL] cargarColaConTitulos ejecutada con idBar:', idBar);
+  //   if (!idBar || idBar <= 0) return;
 
-    // 🔹 Llamada al backend para obtener la cola de videos
-    this.videoService.colaVideos(idBar).subscribe({
-      next: (videos: any[]) => {
-        //console.log('[DEBUG PANEL] Respuesta RAW backend:', videos);
-        if (!videos || videos.length === 0) {
-          this.cola = [];
-          console.warn('[DEBUG PANEL] Backend respondió sin videos');
-          return;
-        }
+  //   // 🔹 Llamada al backend para obtener la cola de videos
+  //   this.videoService.colaVideos(idBar).subscribe({
+  //     next: (videos: any[]) => {
+  //       //console.log('[DEBUG PANEL] Respuesta RAW backend:', videos);
+  //       if (!videos || videos.length === 0) {
+  //         this.cola = [];
+  //         console.warn('[DEBUG PANEL] Backend respondió sin videos');
+  //         return;
+  //       }
 
-        this.cola = []; // limpiar cola actual
+  //       this.cola = []; // limpiar cola actual
 
-        videos.forEach((video, index) => {
-          console.log(`[DEBUG PANEL] Video #${index} recibido:`, video);
+  //       // videos.forEach((video, index) => {
+  //       //   console.log(`[DEBUG PANEL] Video #${index} recibido:`, video);
 
-          const idYoutube = video.idVideoYoutube ?? video.idYoutube ?? video.youtubeId ?? null;
-          const mesa = video.idMesa ?? video.numeroMesa ?? video.mesa ?? 'Sin mesa';
-          const idMesa = video.idMesa;
-          if (!idMesa) {
-          } else {
-            // Llamamos al servicio para obtener la mesa real
-            this.mesaService.obtenerMesa(idMesa).subscribe({
-              next: (mesa) => {
-                const mesanumero = mesa.numeroMesa; // aquí sí tienes el número real
-                this.nombreMesa=mesa.codigoQR
+  //       //   const idYoutube = video.idVideoYoutube ?? video.idYoutube ?? video.youtubeId ?? null;
+  //       //   const mesa = video.idMesa ?? video.numeroMesa ?? video.mesa ?? 'Sin mesa';
+  //       //   const idMesa = video.idMesa;
+  //       //   if (!idMesa) {
+  //       //   } else {
+  //       //     // Llamamos al servicio para obtener la mesa real
+  //       //     this.mesaService.obtenerMesa(idMesa).subscribe({
+  //       //       next: (mesa) => {
+  //       //         const mesanumero = mesa.numeroMesa; // aquí sí tienes el número real
+  //       //         this.nombreMesa=mesa.codigoQR
 
-                //  actualizar qrMesa en la cola para el html
-                video.qrMesa = this.nombreMesa;
-              },
-              error: (err) => console.error(`[DEBUG PANEL] Error obteniendo mesa para Video #${index}:`, err)
-            });
+  //       //         //  actualizar qrMesa en la cola para el html
+  //       //         video.qrMesa = this.nombreMesa;
+  //       //       },
+  //       //       error: (err) => console.error(`[DEBUG PANEL] Error obteniendo mesa para Video #${index}:`, err)
+  //       //     });
+  //       //   }
+
+  //       //   const usuario = video.usuario ?? { correoElectronico: localStorage.getItem('usuarioEmail'), nombreCompleto: 'Desconocido' };
+
+  //       //   if (!idYoutube) return;
+
+  //       //   this.cola.push({
+  //       //     ...video,
+  //       //     tituloCancion: idYoutube, // temporal
+  //       //     qrMesa: mesa,
+  //       //     usuario // mostrar quién envió
+  //       //   });
+  //       // });
+
+  //       // // console.log('[DEBUG PANEL] Cola inicial cargada:', this.cola);
+
+  //       // // 🔹 Obtener títulos de YouTube
+  //       // this.cola.forEach(video => {
+  //       //   if (!video.idVideoYoutube) return;
+
+  //       //   this.videoService.obtenerTituloVideo(video.idVideoYoutube).subscribe({
+  //       //     next: titulo => {
+  //       //       video.tituloCancion = titulo;
+  //       //       //console.log('[DEBUG PANEL] Título YouTube cargado para', video.idVideoYoutube, ':', titulo);
+  //       //     },
+  //       //     error: err => console.warn('[DEBUG PANEL] Error consultando YouTube:', err)
+  //       //   });
+  //       // });
+
+  //       videos.forEach((video, index) => {
+
+  //         const idYoutube = video.idVideoYoutube ?? video.idYoutube ?? video.youtubeId ?? null;
+  //         const idMesa = video.idMesa;
+
+  //         const nuevoVideo: any = {
+  //           ...video,
+  //           tituloCancion: idYoutube,
+  //           qrMesa: 'Cargando...',
+  //           usuario: video.usuario ?? {
+  //             correoElectronico: localStorage.getItem('usuarioEmail'),
+  //             nombreCompleto: 'Desconocido'
+  //           }
+  //         };
+
+  //         this.cola.push(nuevoVideo);
+
+  //         if (idMesa) {
+
+  //           this.mesaService.obtenerMesa(idMesa).subscribe({
+  //             next: (mesa) => {
+
+  //               // Aquí guardamos el nombre real de la mesa
+  //               nuevoVideo.qrMesa = mesa.codigoQR;
+
+  //             },
+  //             error: err =>
+  //               console.error(`[DEBUG PANEL] Error obteniendo mesa:`, err)
+  //           });
+
+  //         }
+
+  //       });
+  //     },
+  //     error: err => {
+  //       console.error('[DEBUG PANEL] Error llamando colaVideos:', err);
+  //       if (err.status) console.error('[DEBUG PANEL] HTTP Status:', err.status);
+  //       if (err.error) console.error('[DEBUG PANEL] Body backend:', err.error);
+  //     }
+  //   });
+  // }
+// ======================================================
+// FUNCION: cargarColaConTitulos
+// OBJETIVO:
+// 1. Obtener la cola de videos desde el backend
+// 2. Para cada video obtener el nombre real de la mesa
+// 3. Para cada video obtener el título real desde YouTube
+// 4. Guardar todo en this.cola para que Angular lo renderice en el HTML
+// ======================================================
+
+cargarColaConTitulos(idBar: number): void {
+
+  // Verificamos que el idBar exista y sea válido
+  if (!idBar || idBar <= 0) return;
+
+  // Llamamos al backend para obtener la cola de videos del bar
+  this.videoService.colaVideos(idBar).subscribe({
+
+    // ==============================
+    // RESPUESTA EXITOSA DEL BACKEND
+    // ==============================
+    next: (videos: any[]) => {
+
+      // Si el backend devuelve null o array vacío
+      if (!videos || videos.length === 0) {
+
+        // Limpiamos la cola del panel
+        this.cola = [];
+
+        // Terminamos ejecución
+        return;
+      }
+
+      // Limpiamos la cola antes de volver a llenarla
+      this.cola = [];
+
+      // Recorremos cada video que llegó desde el backend
+      videos.forEach((video) => {
+
+        // ======================================================
+        // OBTENER ID DEL VIDEO DE YOUTUBE
+        // (el backend puede enviarlo con distintos nombres)
+        // ======================================================
+
+        const idYoutube =
+          video.idVideoYoutube ??   // nombre esperado
+          video.idYoutube ??        // alternativa posible
+          video.youtubeId ??        // otra alternativa posible
+          null;                     // si no existe ninguno queda null
+
+
+        // ======================================================
+        // OBTENER ID DE LA MESA QUE ENVIO LA CANCION
+        // ======================================================
+
+        const idMesa = video.idMesa;
+
+
+        // ======================================================
+        // CREAR OBJETO LOCAL DEL VIDEO
+        // este será el que se renderiza en el HTML
+        // ======================================================
+
+        const nuevoVideo: any = {
+
+          // copiamos todas las propiedades originales del video
+          ...video,
+
+          // guardamos temporalmente el id de youtube como título
+          // luego lo reemplazaremos con el título real
+          tituloCancion: idYoutube,
+
+          // inicialmente la mesa aparecerá como "Cargando..."
+          // luego será reemplazada cuando llegue la respuesta del servicio
+          qrMesa: 'Cargando...',
+
+          // guardamos el usuario que envió el video
+          usuario: video.usuario ?? {
+            correoElectronico: localStorage.getItem('usuarioEmail'),
+            nombreCompleto: 'Desconocido'
           }
 
-          const usuario = video.usuario ?? { correoElectronico: localStorage.getItem('usuarioEmail'), nombreCompleto: 'Desconocido' };
+        };
 
-          if (!idYoutube) return;
 
-          this.cola.push({
-            ...video,
-            tituloCancion: idYoutube, // temporal
-            qrMesa: mesa,
-            usuario // mostrar quién envió
-          });
-        });
+        // ======================================================
+        // AGREGAMOS EL VIDEO A LA COLA
+        // Angular detectará el cambio y lo mostrará en pantalla
+        // ======================================================
 
-        // console.log('[DEBUG PANEL] Cola inicial cargada:', this.cola);
+        this.cola.push(nuevoVideo);
 
-        // 🔹 Obtener títulos de YouTube
-        this.cola.forEach(video => {
-          if (!video.idVideoYoutube) return;
 
-          this.videoService.obtenerTituloVideo(video.idVideoYoutube).subscribe({
-            next: titulo => {
-              video.tituloCancion = titulo;
-              //console.log('[DEBUG PANEL] Título YouTube cargado para', video.idVideoYoutube, ':', titulo);
+        // ======================================================
+        // CONSULTAR LA MESA REAL
+        // ======================================================
+
+        if (idMesa) {
+
+          // llamamos al servicio que obtiene la mesa desde el backend
+          this.mesaService.obtenerMesa(idMesa).subscribe({
+
+            next: (mesa) => {
+
+              // cuando el backend responde guardamos el codigoQR
+              // dentro del objeto del video correspondiente
+              nuevoVideo.qrMesa = mesa.codigoQR;
+
             },
-            error: err => console.warn('[DEBUG PANEL] Error consultando YouTube:', err)
-          });
-        });
-      },
-      error: err => {
-        console.error('[DEBUG PANEL] Error llamando colaVideos:', err);
-        if (err.status) console.error('[DEBUG PANEL] HTTP Status:', err.status);
-        if (err.error) console.error('[DEBUG PANEL] Body backend:', err.error);
-      }
-    });
-  }
 
+            error: err =>
+              console.error('[DEBUG PANEL] Error obteniendo mesa:', err)
+
+          });
+
+        }
+
+
+        // ======================================================
+        // CONSULTAR TITULO REAL DEL VIDEO EN YOUTUBE
+        // ======================================================
+
+        if (idYoutube) {
+
+          // llamamos al servicio que consulta el título del video
+          this.videoService.obtenerTituloVideo(idYoutube).subscribe({
+
+            next: titulo => {
+
+              // reemplazamos el ID por el título real del video
+              nuevoVideo.tituloCancion = titulo;
+
+            },
+
+            error: err =>
+              console.warn('[DEBUG PANEL] Error consultando YouTube:', err)
+
+          });
+
+        }
+
+      });
+
+    },
+
+    // ==============================
+    // ERROR EN LA PETICION AL BACKEND
+    // ==============================
+
+    error: err => {
+
+      // mostramos error en consola para depuración
+      console.error('[DEBUG PANEL] Error llamando colaVideos:', err);
+
+    }
+
+  });
+
+}
 
   verificarFlujoPanel(): void {
 
