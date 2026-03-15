@@ -68,7 +68,7 @@ export class ValidacionComponent implements OnInit {
 
   comunicarWA() {
 
-    const telefono = '573135249496'; // 🔹 Cambia por tu número real con código país
+    const telefono = '573027732655'; // 🔹 Cambia por tu número real con código país
     const emailUsuario = this.email || this.loginForm.get('email')?.value || 'No proporcionado';
     this.comunicarConWA=true;
     const mensaje = `
