@@ -12,6 +12,7 @@
   </div>
   <div>
     <button (click)="abrirReproductor()">Abrir Reproductor</button>
+
   </div>
   <!-- ===============================
        GRID RESPONSIVE: Dos columnas en pantalla grande
@@ -116,13 +117,15 @@
     <div class="panel-column cola-column">
       <div class="panel-section cola-section">
         <h2>Cola de Videos</h2>
+        <button (click)="actualizarCola()">actualizar videos</button>
+
         <div *ngIf="!cola || cola.length === 0">
           No hay videos en la cola.
         </div>
         <ul *ngIf="cola && cola.length > 0">
           <li *ngFor="let video of cola">
-            <Mesa:>{{ video.tituloCancion }}  <span> Mesa: {{video.qrMesa}}</span>
-            <button (click)="eliminarVideo(video.idVideo)">Eliminar</button>
+            <Mesa:>{{ video.tituloCancion }} <span> Mesa: {{video.qrMesa}}</span>
+              <button (click)="eliminarVideo(video.idVideo)">Eliminar</button>
           </li>
         </ul>
       </div>

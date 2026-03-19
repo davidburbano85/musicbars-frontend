@@ -60,7 +60,6 @@ export class LoginComponent {
     // Llamamos al servicio para iniciar sesión en Supabase
     this.authService.iniciarSesion(email, password).subscribe({
       next: (res: RespuestaLogin) => {
-        console.log('[LOGIN] Login correcto', res);
 
         // 🔹 Guardamos token principal en localStorage
         localStorage.setItem('sb-auth-token', JSON.stringify(res));
@@ -77,7 +76,6 @@ export class LoginComponent {
 
               // 🔹 Guardamos nombre del bar
               localStorage.setItem('nombreBar', bar.nombreBar.toString());
-              console.log('[INICIARSESION] nombre Bar: ', bar.nombreBar);
 
             } else {
               console.warn('[LOGIN] Usuario sin bar asignado');
@@ -87,7 +85,6 @@ export class LoginComponent {
 
             if (bar?.nombreBar?.trim().length) {
               this.iniciarSesi = true;
-              console.log('[INICIARSESION] nombre Bar: ', bar.nombreBar);
               this.router.navigate(['/panel'])
             } else {
               this.iniciarSesi = false;

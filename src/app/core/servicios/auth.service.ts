@@ -183,7 +183,6 @@ export class AuthService {
       tap(res => {
         if (res) {
           this._barUsuario = res;
-          console.log('[AuthService] Bar del usuario cargado:', this._barUsuario);
         } else {
           console.warn('[AuthService] Usuario no tiene bar asociado');
         }
@@ -201,7 +200,6 @@ export class AuthService {
     return this.http.get<Mesa>(urlMesa, { headers }).pipe(
       tap(resMesa => {
         this._mesa = resMesa;
-        console.log('[AuthService] Datos de la mesa cargados:', this._mesa);
       })
     );
   }
@@ -244,7 +242,6 @@ export class AuthService {
       refreshToken = parsed.refresh_token;
       if (!refreshToken) throw new Error('No existe refresh_token');
     } catch (err) {
-      console.error('[AuthService] Error parseando token:', err);
       return throwError(() => new Error('Token inválido'));
     }
 
@@ -255,7 +252,6 @@ export class AuthService {
     });
     const body = { refresh_token: refreshToken };
 
-    console.log('[AuthService] Intentando refrescar token con refresh_token:', refreshToken);
 
     return this.http.post<any>(url, body, { headers }).pipe(
       map(resp => {
@@ -265,11 +261,9 @@ export class AuthService {
 
         // 🔹 Actualizar localStorage con nueva sesión
         localStorage.setItem('sb-auth-token', JSON.stringify(resp));
-        console.log('[AuthService] Token renovado correctamente:', resp.access_token);
         return resp.access_token;
       }),
       catchError(err => {
-        console.error('[AuthService] Error refrescando token:', err);
         return throwError(() => err);
       })
     );
