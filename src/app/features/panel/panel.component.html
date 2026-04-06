@@ -73,7 +73,7 @@
       </div>
 
       <!-- ===============================
-           SECCIÓN MESAS
+           SECCIÓN MESAS ACTUALIZACION
       ================================= -->
       <div class="panel-section mesas-section">
         <h2>Actualizar Mesa</h2>
@@ -108,6 +108,26 @@
           Crear Mesa
         </button>
       </div>
+      <!-- ============================
+          cargarqr
+         ============================   -->
+
+      <div class="panel-section mesas-section">
+        <h2>Generar QR para Mesa</h2>
+        <button (click)="generarUrlQr()">
+          Generar QR
+        </button>
+        <!-- crear unos divs para llamar la funcion crearQr -->
+        <!-- mostramos el qr en la pantalla, para esto el HTML debe iterar 
+          sobre codigoQrGenerado y mostrar cada qrDataUrl como imagen  las imagenes deben ser vistas en pantalla
+          con el nombre de la mesa -->
+        <div *ngFor="let qr of codigoQrGenerado">
+          <h3>Mesa: {{qr.nombreMesa}}</h3>
+          <img [src]="qr.qrDataUrl" />
+
+        </div>
+
+      </div>
 
     </div>
 
@@ -132,4 +152,3 @@
     </div>
 
   </div>
-</div>

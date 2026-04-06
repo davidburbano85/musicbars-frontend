@@ -7,6 +7,7 @@ import { MesaService } from '../../core/servicios/mesa.service';
 import { AuthService, UsuarioReal, BarUsuario } from '../../core/servicios/auth.service';
 import { BarCrearDto, BarService } from '../../core/servicios/bar.service';
 import { FormGroup } from '@angular/forms';
+import * as QRCode from 'qrcode';
 
 @Component({
   selector: 'app-panel',
@@ -19,6 +20,7 @@ export class PanelComponent implements OnInit {
 
   titulo: string = 'Panel de Administración';
   cola: any[] = [];
+  codigoQrGenerado:any[] = [];
   idBar: number | null = null;
   intervalColaId: any;      // Intervalo para refresco de cola
   intervalTokenId: any;     // Intervalo para refresco de token
@@ -343,8 +345,9 @@ export class PanelComponent implements OnInit {
   // ======================================================
   crearMesaForm(numeroMesa: number, codigoQR: string): void {
     console.log('[Panel] crearMesaForm:', numeroMesa, codigoQR);
-    alert(`la mesa: ${codigoQR} fue creada exitosamente`);
-    this.mesaService.crearMesa(numeroMesa, codigoQR).subscribe({
+    const urlQR = `https://musicbars.onrender.com/mesa/${codigoQR}`;
+    alert(`la mesa: ${urlQR} fue creada exitosamente`);
+    this.mesaService.crearMesa(numeroMesa, urlQR).subscribe({
       next: () => console.log('[Panel] Mesa creada correctamente'),
       error: err => console.error('[Panel] Error creando mesa:', err)
     });
@@ -413,10 +416,10 @@ export class PanelComponent implements OnInit {
   mesaSeleccionada: any = null;
   modoEdicionMesa = false;
   buscarMesa(qr: string): void {
+    const urlQrFin = `https://musicbars.onrender.com/mesa/${qr}`;
 
-    if (!qr) return;
-
-    this.mesaService.obtenerMesaPorQR(qr).subscribe({
+    if (!urlQrFin) return;
+    this.mesaService.obtenerMesaPorQR(urlQrFin).subscribe({
       next: mesa => {
         console.log('[Panel] Mesa encontrada:', mesa);
 
@@ -433,9 +436,10 @@ export class PanelComponent implements OnInit {
   guardarMesa(numero: number, qr: string): void {
 
     if (!this.mesaSeleccionada) return;
-
+    const urlQrFinal = `https://musicbars.onrender.com/mesa/${qr}`;
+    const urlQRCod = `https://musicbars.onrender.com/mesa/${this.mesaSeleccionada.codigoQR}`;
     const numeroFinal = numero || this.mesaSeleccionada.numeroMesa;
-    const qrFinal = qr || this.mesaSeleccionada.codigoQR;
+    const qrFinal = urlQrFinal || urlQRCod
 
     this.mesaService.actualizarMesa(
       this.mesaSeleccionada.idMesa,
@@ -508,6 +512,8 @@ export class PanelComponent implements OnInit {
     });
   }
 
+
+
   abrirReproductor() {
     window.open('/reproductor', '_blank');
   }
@@ -560,5 +566,50 @@ export class PanelComponent implements OnInit {
       this.cargandoCola = false;
     }, 2000); // evita spam de clicks
   }
+
+  // ======================================================
+  // 🟢 GENERAR URL Y QR PARA TODAS LAS MESAS
+  // ======================================================
+  generarUrlQr() {
+    //necesitamos entrar en mesaService y traer todas las mesas para generar su QR
+    this.mesaService.obtenerMesas().subscribe({
+      next: (mesas) => {
+        if (!mesas || mesas.length === 0) {
+          console.warn('[Panel] No hay mesas para generar QR.');
+          return;
+        }
+        mesas.forEach((mesa: any) => {
+          console.log('mesa', mesa);
+          //ya tenemos laurl completa ahora generamos el QR con mesa.codigoQR
+          const urlQr = mesa.codigoQR;
+          //ahora con el urlQr generamos el QR usando la libreria QRCode
+          QRCode.toDataURL(urlQr, (err: any, qrDataUrl: string) => {
+            if (err) {
+              console.error('[Panel] Error generando QR:', err);
+              return;
+            }
+            //guardamos el QR generado en el objeto de la mesa para mostrarlo en el HTML
+            this.codigoQrGenerado.push({ qrDataUrl, nombreMesa:mesa.codigoQR });
+            console.log('QR generado para mesa', mesa.idMesa);
+            //mostramos el qr en la pantalla, para esto el HTML debe iterar sobre codigoQrGenerado y mostrar cada qrDataUrl como imagen
+
+
+          });
+        });
+      },
+
+
+    });
+
+
+  }
+
+
+
+
+
+
+
+
 }
 
