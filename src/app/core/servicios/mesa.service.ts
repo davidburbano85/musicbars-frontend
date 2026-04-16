@@ -9,7 +9,7 @@ export class MesaService {
 
   private baseUrl = 'https://musicbares-backend.onrender.com/api/mesa';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // =====================================================
   // 🔐 Obtener token EXACTAMENTE igual que VideoService
@@ -57,14 +57,17 @@ export class MesaService {
   // 🟢 Crear mesa
   // =====================================================
   crearMesa(numeroMesa: number, codigoQR: string): Observable<any> {
-
+    console.log('[MesaService] crearMesa INICIO');
+    console.log('[MesaService] numeroMesa:', numeroMesa);
+    console.log('[MesaService] codigoQR RECIBIDO:', codigoQR);
     const body = {
       numeroMesa: numeroMesa,
       codigoQR: codigoQR,
       estado: true
     };
 
-    console.log('[MesaService] POST crearMesa body:', body);
+    console.log('[MesaService] BODY ENVIADO:', body);
+    console.log('[MesaService] URL:', this.baseUrl);
 
     return this.http.post(
       this.baseUrl,
@@ -103,23 +106,24 @@ export class MesaService {
   // 🟣 Obtener mesa por QR
   // =====================================================
   obtenerMesaPorQR(qr: string): Observable<any> {
-
+    console.log('[MesaService] obtenerMesaPorQR INICIO');
     console.log('[MesaService] GET mesa por QR:', qr);
-
+    console.log('[MesaService] BASE URL:', this.baseUrl);
+    console.log('[MesaService] URL FINAL:', `${this.baseUrl}/qr/${qr}`);
     return this.http.get(
       `${this.baseUrl}/qr/${qr}`,
       { headers: this.construirHeaders() }
     );
   }
 
-  
+
   // =====================================================
   // 🔴 Actualizar mesa
   // =====================================================
-  actualizarMesa( idMesa:number, nuevoNumero: number, nuevoQR: string,estado:boolean): Observable<any> {
+  actualizarMesa(idMesa: number, nuevoNumero: number, nuevoQR: string, estado: boolean): Observable<any> {
 
     const body = {
-      idMesa:idMesa,
+      idMesa: idMesa,
       numeroMesa: nuevoNumero,
       codigoQR: nuevoQR,
       estado: estado

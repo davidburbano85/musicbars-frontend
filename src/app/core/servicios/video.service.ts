@@ -6,12 +6,12 @@ import { AuthService } from './auth.service';
 
 
 export interface Video {
-  idMesa:number;
+  idMesa: number;
   titulo: string;
   linkVideo: string;
-  nombreCancion:  string;
+  nombreCancion: string;
   idVideoYoutube: string;
-  
+
 }
 @Injectable({
   providedIn: 'root'
@@ -29,8 +29,8 @@ export class VideoService {
   colaVideos(idBar: number): Observable<Video[]> {
     const token = localStorage.getItem('access_token') || '';
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    console.log("colavideos[VIDEOSERVICES] IDbAR",idBar);
-    
+    console.log("colavideos[VIDEOSERVICES] IDbAR", idBar);
+
     const url = `${this.apiUrl}/cola/${idBar}`;
     this.http.get<Video[]>(`${this.apiUrl}/cola/${idBar}`).subscribe(console.log, console.error);
     return this.http.get<Video[]>(url, { headers });
@@ -77,16 +77,21 @@ export class VideoService {
   // ================================================
   // 1️⃣ Registrar videos desde la mesa (sin token)
   // ================================================
- registrarVideosMesa(codigoMesa: string, links: string[]): Observable<any> {
+  registrarVideosMesa(codigoMesa: string, links: string[]): Observable<any> {
 
-  // 🔹 Chequeo de sesión antes de enviar
-  // if (!this.authService.estaAutenticado()) {
-  //   return throwError(() => new Error('Usuario no autenticado, no se puede enviar canciones'));
-  // }
-
-  const body = { codigoMesa, links };
-  return this.http.post(`${this.apiUrl}/registrar-multiples`, body);
-}
+    // 🔹 Chequeo de sesión antes de enviar
+    // if (!this.authService.estaAutenticado()) {
+    //   return throwError(() => new Error('Usuario no autenticado, no se puede enviar canciones'));
+    // }
+    const codigoFormateado = `https://musicbars.onrender.com/mesa/${codigoMesa}`;
+    console.log('[VideoService] ENVIANDO registrarVideosMesa');
+    console.log('[VideoService] codigoMesa:', codigoMesa);
+    console.log('[VideoService] links:', links);
+    console.log('[VideoService] URL:', `${this.apiUrl}/registrar-multiples`);
+    const body = { codigoMesa:codigoFormateado, links };
+    console.log('[VideoService] BODY ENVIADO:', body);
+    return this.http.post(`${this.apiUrl}/registrar-multiples`, body);
+  }
 
   // ================================================
   // 2️⃣ Obtener siguiente video (requiere token)
@@ -96,7 +101,7 @@ export class VideoService {
     // 🔹 Obtenemos token real desde Supabase localStorage
     const token = this.obtenerTokenSupabase();
 
-   // console.log('[VideoService] obtenerSiguienteVideo -> token detectado:', token);
+    // console.log('[VideoService] obtenerSiguienteVideo -> token detectado:', token);
 
     // 🔹 Creamos headers SIEMPRE con Authorization
     const headers = new HttpHeaders({
@@ -104,11 +109,11 @@ export class VideoService {
       'Content-Type': 'application/json'
     });
 
-   // console.log('[VideoService] obtenerSiguienteVideo -> headers:', headers);
+    // console.log('[VideoService] obtenerSiguienteVideo -> headers:', headers);
 
     const url = `${this.apiUrl}/siguiente/${idBar}`;
 
-   // console.log('[VideoService] obtenerSiguienteVideo -> URL:', url);
+    // console.log('[VideoService] obtenerSiguienteVideo -> URL:', url);
 
     return this.http.get(url, { headers });
   }
@@ -120,7 +125,7 @@ export class VideoService {
 
     const headers = this.construirHeaders();
 
-   // console.log('[VideoService] eliminarVideo -> headers:', headers);
+    // console.log('[VideoService] eliminarVideo -> headers:', headers);
 
     return this.http.delete(`${this.apiUrl}/${idVideo}`, { headers });
   }
@@ -133,10 +138,10 @@ export class VideoService {
     // Supabase guarda sesión como JSON en "sb-auth-token"
     const raw = localStorage.getItem('sb-auth-token');
 
-   // console.log('[VideoService] obtenerTokenSupabase -> raw token:', raw);
+    // console.log('[VideoService] obtenerTokenSupabase -> raw token:', raw);
 
     if (!raw) {
-     // console.warn('[VideoService] No existe sesión Supabase en localStorage');
+      // console.warn('[VideoService] No existe sesión Supabase en localStorage');
       return '';
     }
 
@@ -146,13 +151,13 @@ export class VideoService {
 
       const token = parsed?.access_token || '';
 
-     // console.log('[VideoService] Token extraído correctamente:', token);
+      // console.log('[VideoService] Token extraído correctamente:', token);
 
       return token;
 
     } catch (err) {
 
-     // console.error('[VideoService] Error parseando token Supabase:', err);
+      // console.error('[VideoService] Error parseando token Supabase:', err);
       return '';
     }
   }
@@ -169,7 +174,7 @@ export class VideoService {
       'Content-Type': 'application/json'
     });
 
-   // console.log('[VideoService] construirHeaders -> headers:', headers);
+    // console.log('[VideoService] construirHeaders -> headers:', headers);
 
     return headers;
   }
@@ -179,16 +184,16 @@ export class VideoService {
   // ================================================
   marcarVideoIniciado(idYoutube: string): Observable<any> {
 
-   // console.log('[VideoService] marcarVideoIniciado -> idYoutube:', idYoutube);
+    // console.log('[VideoService] marcarVideoIniciado -> idYoutube:', idYoutube);
 
     // Obtenemos headers con token JWT real
     const headers = this.getAuthHeaders();
-   // console.log('[VideoService] marcarVideoIniciado -> Headers:', headers);
+    // console.log('[VideoService] marcarVideoIniciado -> Headers:', headers);
 
     // 🔴 AJUSTA ESTA RUTA SEGÚN TU BACKEND
     const url = `${this.apiUrl}/marcar-iniciado/${idYoutube}`;
 
-  //  console.log('[VideoService] marcarVideoIniciado -> URL:', url);
+    //  console.log('[VideoService] marcarVideoIniciado -> URL:', url);
 
     // Enviamos PUT vacío (solo para cambiar estado)
     return this.http.put(url, {}, { headers });
